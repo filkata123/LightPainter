@@ -14,38 +14,64 @@ AStroke::AStroke()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(Root);
 
+	StrokeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("StrokeMeshes"));
+	StrokeMeshes->SetupAttachment(Root);
+
+	JointMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("JointMeshes"));
+	JointMeshes->SetupAttachment(Root);
+
 }
 
 void AStroke::Update(FVector CursorLocation)
 {
-	USplineMeshComponent* Spline = CreateSplineMesh();
-
-	FVector StartPosition = GetActorTransform().InverseTransformPosition(CursorLocation);
-	FVector EndPosition = GetActorTransform().InverseTransformPosition(PreviousCursorLocation);
-
-	if (PreviousCursorLocation == FVector(0, 0, 0))
+	if (PreviousCursorLocation.IsNearlyZero())
 	{
-		Spline->SetStartAndEnd(StartPosition, FVector(0, 0, 0), StartPosition, FVector(0, 0, 0));
+		PreviousCursorLocation = CursorLocation;
+		JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
+		return;
 	}
-	else
-	{
-		Spline->SetStartAndEnd(StartPosition, FVector(0, 0, 0), EndPosition, FVector(0, 0, 0));
-	}
+
+	StrokeMeshes->AddInstance(GetNextSegmentTransform(CursorLocation));
+	JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
 
 	PreviousCursorLocation = CursorLocation;
 }
 
-
-USplineMeshComponent* AStroke::CreateSplineMesh()
+FTransform AStroke::GetNextSegmentTransform(FVector CurrentLocation) const
 {
-	USplineMeshComponent* NewSpline = NewObject<USplineMeshComponent>(this);
+	FTransform SegmentTransform;
 
-	NewSpline->SetMobility(EComponentMobility::Movable);
-	NewSpline->AttachToComponent(Root, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	NewSpline->SetStaticMesh(SplineMesh);
-	NewSpline->SetMaterial(0, SplineMaterial);
-	NewSpline->RegisterComponent();
+	SegmentTransform.SetScale3D(GetNextSegmentScale(CurrentLocation));
+	SegmentTransform.SetRotation(GetNextSegmentRotation(CurrentLocation));
+	SegmentTransform.SetLocation(GetNextSegmentLocation(CurrentLocation));
 
-	return NewSpline;
+	return SegmentTransform;
+}
+
+FTransform AStroke::GetNextJointTransform(FVector CurrentLocation) const
+{
+	FTransform JointTransform;
+	JointTransform.SetLocation(GetTransform().InverseTransformPosition(CurrentLocation));
+
+	return FTransform();
+}
+
+FVector AStroke::GetNextSegmentLocation(FVector CurrentLocation) const
+{
+	return GetTransform().InverseTransformPosition(PreviousCursorLocation);
+}
+
+FVector AStroke::GetNextSegmentScale(FVector CurrentLocation) const
+{
+	FVector Segment  = CurrentLocation - PreviousCursorLocation;
+	return FVector(Segment.Size(), 1, 1);
+}
+
+FQuat AStroke::GetNextSegmentRotation(FVector CurrentLocation) const
+{
+	FVector Segment = CurrentLocation - PreviousCursorLocation;
+	FVector SegmentNormal = Segment.GetSafeNormal();
+
+	return FQuat::FindBetweenNormals(FVector::ForwardVector, SegmentNormal);
 }
 

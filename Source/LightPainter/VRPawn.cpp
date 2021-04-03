@@ -4,6 +4,8 @@
 #include "VRPawn.h"
 #include "Engine/World.h"
 
+#include "Saving/PainterSaveGame.h"
+
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -29,6 +31,8 @@ void AVRPawn::BeginPlay()
 
 	}
 
+	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	Painting->Save();
 	
 }
 
