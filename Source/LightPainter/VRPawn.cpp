@@ -4,7 +4,7 @@
 #include "VRPawn.h"
 #include "Engine/World.h"
 
-#include "Saving/PainterSaveGame.h"
+
 
 
 // Sets default values
@@ -23,16 +23,20 @@ void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HandControllerClass != nullptr)
+	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	if (Painting && Painting->Save())
 	{
-		RightHandController = GetWorld()->SpawnActor<AHandController>(HandControllerClass);
-		RightHandController->AttachToComponent(VRRoot, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		RightHandController->SetOwner(this);
+		CurrentSlotName = Painting->GetSlotName();
+	}
+
+	if (PaintBrushHandControllerClass != nullptr)
+	{
+		RightPaintBrushHandController = GetWorld()->SpawnActor<AHandControllerBase>(PaintBrushHandControllerClass);
+		RightPaintBrushHandController->AttachToComponent(VRRoot, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		RightPaintBrushHandController->SetOwner(this);
 
 	}
 
-	UPainterSaveGame* Painting = UPainterSaveGame::Create();
-	Painting->Save();
 	
 }
 
@@ -43,6 +47,33 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), EInputEvent::IE_Pressed, this, &AVRPawn::RightTriggerPressed);
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
 
+	PlayerInputComponent->BindAction(TEXT("Save"), EInputEvent::IE_Released, this, &AVRPawn::Save);
+	PlayerInputComponent->BindAction(TEXT("Load"), EInputEvent::IE_Released, this, &AVRPawn::Load);
 
+}
 
+void AVRPawn::Save()
+{
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
+	if (Painting)
+	{
+		Painting->SetState("Hello World");
+		Painting->SerializeFromWorld(GetWorld());
+		Painting->Save();
+	}
+}
+
+void AVRPawn::Load()
+{
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
+	if (Painting)
+	{
+		Painting->DeSerializeToWorld(GetWorld());
+		UE_LOG(LogTemp, Warning, TEXT("Painting State %s"), *Painting->GetState());
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NOT FOUND"));
+	}
 }
