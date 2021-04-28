@@ -3,6 +3,9 @@
 
 #include "VRPawn.h"
 #include "Engine/World.h"
+#include "PaintingGameMode.h"
+
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -23,11 +26,6 @@ void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UPainterSaveGame* Painting = UPainterSaveGame::Create();
-	if (Painting && Painting->Save())
-	{
-		CurrentSlotName = Painting->GetSlotName();
-	}
 
 	if (PaintBrushHandControllerClass != nullptr)
 	{
@@ -48,32 +46,16 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
 
 	PlayerInputComponent->BindAction(TEXT("Save"), EInputEvent::IE_Released, this, &AVRPawn::Save);
-	PlayerInputComponent->BindAction(TEXT("Load"), EInputEvent::IE_Released, this, &AVRPawn::Load);
 
 }
 
 void AVRPawn::Save()
 {
-	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
-	if (Painting)
-	{
-		Painting->SetState("Hello World");
-		Painting->SerializeFromWorld(GetWorld());
-		Painting->Save();
-	}
-}
 
-void AVRPawn::Load()
-{
-	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
-	if (Painting)
-	{
-		Painting->DeSerializeToWorld(GetWorld());
-		UE_LOG(LogTemp, Warning, TEXT("Painting State %s"), *Painting->GetState());
+	auto GameMode = Cast<APaintingGameMode>(GetWorld()->GetAuthGameMode());
+	if (!GameMode) return;
+	GameMode->Save();
 
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("NOT FOUND"));
-	}
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
+
 }

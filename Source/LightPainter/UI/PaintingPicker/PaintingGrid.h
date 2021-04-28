@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
+#include "PaintingGridCard.h"
 #include "Components/UniformGridPanel.h"
 #include "PaintingGrid.generated.h"
 
@@ -19,13 +19,16 @@ class LIGHTPAINTER_API UPaintingGrid : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintCallable)
-	void AddPainting();
+	void AddPainting(int32 PaintingIndex, FString PaintingName);
+
+	void ClearPaintings();
+
 
 protected:
-	UPROPERTY(BlueprintReadonly, VisibleAnywhere, meta = (BindWidget))
-		UUniformGridPanel* PaintingGrid;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
+	UUniformGridPanel* PaintingGrid;
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UUserWidget> GridCardClass;
+	TSubclassOf<UPaintingGridCard> GridCardClass;
 };

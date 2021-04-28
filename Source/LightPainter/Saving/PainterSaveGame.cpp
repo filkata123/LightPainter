@@ -7,13 +7,22 @@
 #include "Misc/Guid.h"
 
 #include "EngineUtils.h"
+#include "PainterSaveGameIndex.h"
+
 #include "../Stroke.h"
+
 
 UPainterSaveGame* UPainterSaveGame::Create()
 {
 	UPainterSaveGame* NewSaveGame = Cast<UPainterSaveGame>(UGameplayStatics::CreateSaveGameObject(StaticClass()));
 
 	NewSaveGame->SlotName = FGuid::NewGuid().ToString();
+	if (!NewSaveGame->Save()) return nullptr;
+
+
+	UPainterSaveGameIndex* Index = UPainterSaveGameIndex::Load();
+	Index->AddSaveGame(NewSaveGame);
+	Index->Save();
 
 	return NewSaveGame;
 	 
@@ -21,6 +30,7 @@ UPainterSaveGame* UPainterSaveGame::Create()
 
 bool UPainterSaveGame::Save()
 {
+	
 	return UGameplayStatics::SaveGameToSlot(this, SlotName, 0);
 }
 

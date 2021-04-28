@@ -34,7 +34,6 @@ private:
 	void RightTriggerReleased() { if (RightPaintBrushHandController) RightPaintBrushHandController->TriggerReleased(); }
 
 	void Save();
-	void Load();
 
 
 	//	Config
@@ -52,6 +51,4 @@ private:
 	UPROPERTY()
 	AHandControllerBase* RightPaintBrushHandController;
 
-	// State
-	FString CurrentSlotName;
 };
