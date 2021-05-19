@@ -7,7 +7,6 @@
 APaintBrushHandController::APaintBrushHandController()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 	
 
 }

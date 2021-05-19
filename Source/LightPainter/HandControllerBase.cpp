@@ -11,8 +11,13 @@ AHandControllerBase::AHandControllerBase()
 
 	MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionController"));
 	SetRootComponent(MotionController);
-	MotionController->SetTrackingSource(EControllerHand::Right);
 	MotionController->SetShowDeviceModel(true);
+}
+
+void AHandControllerBase::SetHand(EControllerHand Hand)
+{
+	MotionController->SetTrackingSource(Hand);
+
 }
 
 

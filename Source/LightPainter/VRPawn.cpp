@@ -27,11 +27,21 @@ void AVRPawn::BeginPlay()
 	Super::BeginPlay();
 
 
-	if (PaintBrushHandControllerClass != nullptr)
+	if (RightHandControllerClass != nullptr)
 	{
-		RightPaintBrushHandController = GetWorld()->SpawnActor<AHandControllerBase>(PaintBrushHandControllerClass);
-		RightPaintBrushHandController->AttachToComponent(VRRoot, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		RightPaintBrushHandController->SetOwner(this);
+		RightHandController = GetWorld()->SpawnActor<AHandControllerBase>(RightHandControllerClass);
+		RightHandController->AttachToComponent(VRRoot, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		RightHandController->SetOwner(this);
+		RightHandController->SetHand(EControllerHand::Right);
+
+	}
+
+	if (LeftHandControllerClass != nullptr)
+	{
+		LeftHandController = GetWorld()->SpawnActor<AHandControllerBase>(LeftHandControllerClass);
+		LeftHandController->AttachToComponent(VRRoot, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		LeftHandController->SetOwner(this);
+		LeftHandController->SetHand(EControllerHand::Left);
 
 	}
 
@@ -45,17 +55,5 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), EInputEvent::IE_Pressed, this, &AVRPawn::RightTriggerPressed);
 	PlayerInputComponent->BindAction(TEXT("RightTrigger"), EInputEvent::IE_Released, this, &AVRPawn::RightTriggerReleased);
 
-	PlayerInputComponent->BindAction(TEXT("Save"), EInputEvent::IE_Released, this, &AVRPawn::Save);
-
 }
 
-void AVRPawn::Save()
-{
-
-	auto GameMode = Cast<APaintingGameMode>(GetWorld()->GetAuthGameMode());
-	if (!GameMode) return;
-	GameMode->Save();
-
-	UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
-
-}

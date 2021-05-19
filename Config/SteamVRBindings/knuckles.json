@@ -17,28 +17,6 @@
 							"output": "/actions/main/in/RightTrigger"
 						}
 					}
-				},
-				{
-					"mode": "button",
-					"path": "/user/hand/right/input/b",
-					"inputs":
-					{
-						"click":
-						{
-							"output": "/actions/main/in/Save"
-						}
-					}
-				},
-				{
-					"mode": "button",
-					"path": "/user/hand/right/input/a",
-					"inputs":
-					{
-						"click":
-						{
-							"output": "/actions/main/in/Load"
-						}
-					}
 				}
 			],
 			"poses": [

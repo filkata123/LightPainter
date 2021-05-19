@@ -19,6 +19,8 @@ public:
 	// Sets default values for this actor's properties
 	AHandControllerBase();
 
+	void SetHand(EControllerHand Hand);
+
 	void virtual TriggerPressed() {};
 	void virtual TriggerReleased() {};
 
