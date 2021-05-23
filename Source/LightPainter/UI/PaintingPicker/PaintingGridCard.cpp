@@ -16,3 +16,6 @@ void UPaintingGridCard::CardButtonClicked()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), "Canvas", true, "SlotName=" + PaintingNameGeneral);
 }
+
+
+
