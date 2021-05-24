@@ -8,6 +8,7 @@
 
 #include "EngineUtils.h"
 #include "PainterSaveGameIndex.h"
+#include "HAL/FileManager.h"
 
 #include "../Stroke.h"
 
@@ -67,4 +68,24 @@ void UPainterSaveGame::ClearWorld(UWorld* World)
 
 		StrokeItr->Destroy();
 	}
+}
+
+
+void UPainterSaveGame::Delete()
+{
+	auto List = UPainterSaveGameIndex::Load();
+	List->RemovePainting(SlotName);
+	List->Save();
+
+	UGameplayStatics::DeleteGameInSlot(SlotName, 0);
+
+	IFileManager::Get().Delete(*GetImagePath(SlotName));
+}
+
+FString UPainterSaveGame::GetImagePath(const FString& UniqueIdentifier)
+{
+	FString ThumbnailDir = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Thumbs"));
+	FString FileName = UniqueIdentifier + ".png";
+
+	return FPaths::Combine(ThumbnailDir, FileName);
 }

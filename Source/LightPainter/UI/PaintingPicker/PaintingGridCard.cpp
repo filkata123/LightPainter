@@ -2,6 +2,7 @@
 
 
 #include "PaintingGridCard.h"
+#include "../../Saving/PainterSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
 void UPaintingGridCard::SetPaintingName(FString PaintingName)
@@ -14,7 +15,22 @@ void UPaintingGridCard::SetPaintingName(FString PaintingName)
 
 void UPaintingGridCard::CardButtonClicked()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), "Canvas", true, "SlotName=" + PaintingNameGeneral);
+	if (!DeleteMode)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), "Canvas", true, "SlotName=" + PaintingNameGeneral);
+	}
+	else
+	{
+		CardButton->SetIsEnabled(false);
+		auto SmhSlot = UPainterSaveGame::Load(PaintingNameGeneral);
+		SmhSlot->Delete();
+	}
+
+}
+
+void UPaintingGridCard::ToggleDelete()
+{
+	DeleteMode = !DeleteMode;
 }
 
 

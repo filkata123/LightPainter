@@ -23,6 +23,7 @@ public:
 
 	void ToggleDeleteMode();
 
+
 	void UpdateCurrentPage(int32 Offset);
 
 protected:

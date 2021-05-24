@@ -88,12 +88,10 @@ void APaintingPicker::AddPainting()
 
 void APaintingPicker::ToggleDeleteMode()
 {
-	if (!GetPaintingGrid()) return;
-
-	//UPainterSaveGame::Delete("391BACF849DFE4F292BC18800AFA4368");
-	GetPaintingGrid()->ClearPaintings();
-	//Refresh();
+	Refresh();
+	GetPaintingGrid()->ToggleDelete();
 }
+
 
 int32 APaintingPicker::GetNumberOfPages() const
 {

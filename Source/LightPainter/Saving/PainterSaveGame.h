@@ -29,6 +29,7 @@ class LIGHTPAINTER_API UPainterSaveGame : public USaveGame
 public:
 	static UPainterSaveGame* Create();
 	bool Save();
+	void Delete();
 	static UPainterSaveGame* Load(FString SlotName);
 
 	void SetState(FString NewState) { State = NewState;}
@@ -38,6 +39,8 @@ public:
 	void DeSerializeToWorld(UWorld* World);
 
 	FString GetSlotName() const { return SlotName; }
+
+	static FString GetImagePath(const FString& UniqueIdentifier);
 
 private:
 	void ClearWorld(UWorld *World);

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "PaintingGridCard.generated.h"
@@ -19,6 +18,7 @@ class LIGHTPAINTER_API UPaintingGridCard : public UUserWidget
 
 public:
 	void SetPaintingName(FString PaintingName);
+	void ToggleDelete();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
@@ -33,4 +33,7 @@ private:
 
 	//state
 	FString PaintingNameGeneral;
+
+	bool DeleteMode = false;
+
 };

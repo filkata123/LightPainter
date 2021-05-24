@@ -32,6 +32,23 @@ void UPaintingGrid::ClearPaintings()
 
 }
 
+void UPaintingGrid::ToggleDelete()
+{
+	if (!PaintingGrid) return;
+	TArray <UWidget*> WidgetList = PaintingGrid->GetAllChildren();
+
+	for (UWidget* Widget : WidgetList)
+	{
+		UPaintingGridCard* card = Cast<UPaintingGridCard>((Cast<USizeBox>(Widget))->GetChildAt(0));
+		if (card)
+		{
+			card->ToggleDelete();
+		}
+	}
+
+
+}
+
 void UPaintingGrid::AddPaginationDot(bool Active)
 {
 	if (!PaginationDots) return;
