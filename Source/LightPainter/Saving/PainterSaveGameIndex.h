@@ -23,6 +23,7 @@ public:
 	bool Save(); 
 
 	void AddSaveGame(UPainterSaveGame* SaveGame);
+
 	TArray<FString> GetSlotNames() const { return SlotNames; }
 
 private:

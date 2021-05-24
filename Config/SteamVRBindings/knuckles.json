@@ -17,6 +17,17 @@
 							"output": "/actions/main/in/RightTrigger"
 						}
 					}
+				},
+				{
+					"mode": "joystick",
+					"path": "/user/hand/right/input/thumbstick",
+					"inputs":
+					{
+						"position":
+						{
+							"output": "/actions/main/in/PaginateRight_X,PaginateRight_Y X Y_axis2d"
+						}
+					}
 				}
 			],
 			"poses": [

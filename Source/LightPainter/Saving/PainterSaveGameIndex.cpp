@@ -27,3 +27,4 @@ void UPainterSaveGameIndex::AddSaveGame(UPainterSaveGame* SaveGame)
 {
 	SlotNames.Add(SaveGame->GetSlotName());
 }
+

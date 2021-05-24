@@ -39,43 +39,60 @@ void APaintingPicker::BeginPlay()
 		ActionBardWidget->SetParentPicker(this);
 	}
 
-	RefreshSlots();
-
+	Refresh();
 	
 }
+void APaintingPicker::UpdateCurrentPage(int32 Offset)
+{
+	CurrentPage = FMath::Clamp(CurrentPage + Offset, 0, (GetNumberOfPages() - 1));
+	Refresh();
+}
+
 
 void APaintingPicker::RefreshSlots()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Number of pages %d"), GetNumberOfPages());
 	if (!GetPaintingGrid()) return;
-
-	GetPaintingGrid()->AddPaginationDot(true);
-	GetPaintingGrid()->AddPaginationDot(false);
-	GetPaintingGrid()->AddPaginationDot(false);
 
 	GetPaintingGrid()->ClearPaintings();
 
-	int32 Index = 0;
-	for (FString Name : UPainterSaveGameIndex::Load()->GetSlotNames())
+	int32 StartOffset = CurrentPage * GetPaintingGrid()->GetNumberOfSlots();
+
+	auto SlotNames = UPainterSaveGameIndex::Load()->GetSlotNames();
+
+	for (int32 i = 0; i < GetPaintingGrid()->GetNumberOfSlots() && StartOffset + i < SlotNames.Num(); i++)
 	{
-		GetPaintingGrid()->AddPainting(Index, Name);
-		++Index;
+		GetPaintingGrid()->AddPainting(i, SlotNames[StartOffset + i]);
+	}
+
+}
+
+void APaintingPicker::RefreshDots()
+{
+	if (!GetPaintingGrid()) return;
+
+
+	GetPaintingGrid()->ClearPaginationDots();
+	for (int i = 0; i < GetNumberOfPages(); i++)
+	{
+		GetPaintingGrid()->AddPaginationDot(i == CurrentPage);
 	}
 
 }
 
 void APaintingPicker::AddPainting()
 {
-	UPainterSaveGame* Painting = UPainterSaveGame::Create();
+	UPainterSaveGame::Create();
 
-	RefreshSlots();
+	Refresh();
 }
 
 void APaintingPicker::ToggleDeleteMode()
 {
 	if (!GetPaintingGrid()) return;
 
+	//UPainterSaveGame::Delete("391BACF849DFE4F292BC18800AFA4368");
 	GetPaintingGrid()->ClearPaintings();
+	//Refresh();
 }
 
 int32 APaintingPicker::GetNumberOfPages() const
@@ -88,4 +105,6 @@ int32 APaintingPicker::GetNumberOfPages() const
 
 	return FMath::DivideAndRoundUp(TotalNumberOfSlot, SlotsPerPage);
 }
+
+
 

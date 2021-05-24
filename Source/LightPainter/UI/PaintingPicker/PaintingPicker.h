@@ -23,18 +23,24 @@ public:
 
 	void ToggleDeleteMode();
 
+	void UpdateCurrentPage(int32 Offset);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 
 private:
+
+	void Refresh() { RefreshSlots(); RefreshDots(); }
 	void RefreshSlots();
+	void RefreshDots();
 
 	int32 GetNumberOfPages() const;
 
 	UPaintingGrid* GetPaintingGrid() const { return Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject()); }
 
+	// Components
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
 
@@ -44,6 +50,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UWidgetComponent* ActionBar;
 
-	//State
-	FString CurrentSlotName;
+	// State
+	int32 CurrentPage = 0;
 };
